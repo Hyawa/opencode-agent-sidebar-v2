@@ -1,0 +1,29 @@
+{
+  "name": "opencode-agent-sidebar-v2",
+  "version": "1.0.0",
+  "description": "Live sub-agent activity in the OpenCode v2 TUI sidebar. MIT port of @psh4607/opencode-agent-sidebar.",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "tui",
+    "sidebar",
+    "subagent",
+    "agent"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./tui": "./src/tui.tsx"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@opencode/plugin": "2.2.7",
+    "@opentui/core": "^0.8.1",
+    "@opentui/solid": "^0.8.1",
+    "solid-js": "^1.9.0",
+    "typescript": "^5.9.0"
+  }
+}
