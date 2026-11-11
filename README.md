@@ -32,31 +32,40 @@ Live entries show `Queued` / `Running` / `Retrying`; finished ones linger ~3s wi
 
 ## Install
 
-1. Clone this repository somewhere permanent:
+**Option A — from GitHub (recommended)**
 
-   ```sh
-   git clone https://github.com/Hyawa/opencode-agent-sidebar-v2.git
-   ```
+```sh
+opencode plugin add github:Hyawa/opencode-agent-sidebar-v2
+```
 
-2. Add the **directory** (not a file) to the `plugins` array in your OpenCode config,
-   `~/.config/opencode/opencode.json(c)`:
+Or add the spec to the `plugins` array in `~/.config/opencode/opencode.json(c)`:
 
-   ```jsonc
-   {
-     "$schema": "https://opencode.ai/config.json",
-     "plugins": [
-       "C:/path/to/opencode-agent-sidebar-v2"
-     ]
-   }
-   ```
+```jsonc
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugins": ["github:Hyawa/opencode-agent-sidebar-v2"]
+}
+```
 
-   Relative paths work too and resolve from the config file that contains the entry.
+Restart the TUI afterwards. The package ships a compiled `dist/`, so no build step
+or local install is needed.
 
-3. Restart the TUI (or run `/reload`).
+**Option B — local checkout (development)**
+
+Clone the repo and point `plugins` at the **directory**:
+
+```jsonc
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugins": ["C:/path/to/opencode-agent-sidebar-v2"]
+}
+```
+
+Run `bun install && bun run build` after changing anything in `src/`.
 
 Only the `./tui` part renders the panel; the `./` part is a no-op server plugin so the
 package can live in `plugins`. If you prefer a TUI-only setup, you can also add the
-directory to `plugins` in `~/.config/opencode/cli.json`.
+spec to `plugins` in `~/.config/opencode/cli.json`.
 
 ## Usage
 
@@ -107,16 +116,21 @@ Internally it is a Solid component registered through `context.ui.slot({ append:
 
 ```sh
 bun install
+bun run build      # compiles src/ to dist/ with the Solid JSX transform
 bun run typecheck
 ```
 
-There is no hot reload: OpenCode re-loads plugins on TUI start.
+OpenCode only runs its Solid/JSX transform outside `node_modules`, so published
+installs use the compiled `dist/`. Rebuild after editing `src/`, then restart the TUI:
+there is no hot reload.
 
 ```text
 src/
   index.ts   # no-op server part (package registration only)
   state.ts   # pure lifecycle + compatibility helpers
   tui.tsx    # the sidebar panel
+build.ts     # Bun + Solid transform build to dist/
+dist/        # committed build output (what GitHub installs run)
 ```
 
 ## License & credits
@@ -136,9 +150,18 @@ If you use this, consider starring the original project too.
 Plugin para OpenCode **v2** que mostra, na sidebar, o que cada sub-agente
 (`task` / `delegate`) está fazendo em tempo real, com cronômetro ao vivo.
 
-Instalação: clone o repositório e adicione o **diretório** ao array `plugins` do
-`~/.config/opencode/opencode.json` (veja acima). Depois reinicie o TUI.
+Instalação:
+
+```sh
+opencode plugin add github:Hyawa/opencode-agent-sidebar-v2
+```
+
+Ou adicione `"github:Hyawa/opencode-agent-sidebar-v2"` ao array `plugins` do
+`~/.config/opencode/opencode.json` e reinicie o TUI.
 Use `/agents-toggle` para mostrar/ocultar.
+
+Para desenvolver, clone o repositório e aponte `plugins` para o diretório local
+(veja a opção B acima).
 
 É uma porta do projeto original (MIT, © Seongho Bak) para a API de plugins do
 OpenCode v2; a licença e o crédito foram mantidos.
