@@ -32,27 +32,14 @@ Live entries show `Queued` / `Running` / `Retrying`; finished ones linger ~3s wi
 
 ## Install
 
-**Option A — from GitHub (recommended)**
+**Option A — local checkout (works today)**
 
 ```sh
-opencode plugin add github:Hyawa/opencode-agent-sidebar-v2
+git clone https://github.com/Hyawa/opencode-agent-sidebar-v2.git
 ```
 
-Or add the spec to the `plugins` array in `~/.config/opencode/opencode.json(c)`:
-
-```jsonc
-{
-  "$schema": "https://opencode.ai/config.json",
-  "plugins": ["github:Hyawa/opencode-agent-sidebar-v2"]
-}
-```
-
-Restart the TUI afterwards. The package ships a compiled `dist/`, so no build step
-or local install is needed.
-
-**Option B — local checkout (development)**
-
-Clone the repo and point `plugins` at the **directory**:
+Add the **directory** (not a file) to the `plugins` array in
+`~/.config/opencode/opencode.json(c)`:
 
 ```jsonc
 {
@@ -61,11 +48,27 @@ Clone the repo and point `plugins` at the **directory**:
 }
 ```
 
-Run `bun install && bun run build` after changing anything in `src/`.
+Relative paths work too and resolve from the config file that contains the entry.
+Then restart the TUI.
 
+**Option B — GitHub spec**
+
+```sh
+opencode plugin add github:Hyawa/opencode-agent-sidebar-v2
+# or, in opencode.json:
+#   "plugins": ["github:Hyawa/opencode-agent-sidebar-v2"]
+```
+
+⚠️ **On OpenCode 2.2.x this currently fails before reaching the plugin**, with
+`NpmInstallFailedError: git dep preparation failed` / `Unrecognized flag: --no-dry-run`.
+That is an upstream package-manager bug in `opencode plugin add` for git
+dependencies, not a problem in this repository (`bun add github:Hyawa/...` works).
+Use Option A until it is fixed, or install by cloning and pinning the path.
+
+The package ships a compiled `dist/`, so no build step is needed either way.
 Only the `./tui` part renders the panel; the `./` part is a no-op server plugin so the
 package can live in `plugins`. If you prefer a TUI-only setup, you can also add the
-spec to `plugins` in `~/.config/opencode/cli.json`.
+same entry to `plugins` in `~/.config/opencode/cli.json`.
 
 ## Usage
 
@@ -150,18 +153,15 @@ If you use this, consider starring the original project too.
 Plugin para OpenCode **v2** que mostra, na sidebar, o que cada sub-agente
 (`task` / `delegate`) está fazendo em tempo real, com cronômetro ao vivo.
 
-Instalação:
-
-```sh
-opencode plugin add github:Hyawa/opencode-agent-sidebar-v2
-```
-
-Ou adicione `"github:Hyawa/opencode-agent-sidebar-v2"` ao array `plugins` do
-`~/.config/opencode/opencode.json` e reinicie o TUI.
+Instalação (funciona hoje): clone o repositório e adicione o **diretório** ao array
+`plugins` do `~/.config/opencode/opencode.json` (veja a opção A acima). Reinicie o TUI.
 Use `/agents-toggle` para mostrar/ocultar.
 
-Para desenvolver, clone o repositório e aponte `plugins` para o diretório local
-(veja a opção B acima).
+> O `opencode plugin add github:...` está quebrado no OpenCode 2.2.x para
+> dependências git (`Unrecognized flag: --no-dry-run`), então use o caminho local
+> por enquanto.
+
+Para desenvolver: `bun install && bun run build` depois de alterar `src/`.
 
 É uma porta do projeto original (MIT, © Seongho Bak) para a API de plugins do
 OpenCode v2; a licença e o crédito foram mantidos.
